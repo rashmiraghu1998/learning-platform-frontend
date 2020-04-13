@@ -128,7 +128,7 @@ const footers = [
 ];
 
 
-class home extends Component {
+class userhome extends Component {
   constructor () {
     super();
     this.state = {
@@ -178,7 +178,7 @@ class home extends Component {
       <AppBar position="static" color="default" elevation={0} className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6" color="inherit" noWrap className={classes.toolbarTitle}>
-            Admin
+            User
           </Typography>
 
           <Button href="#" color="primary" variant="outlined" className={classes.link}>
@@ -276,4 +276,4 @@ class home extends Component {
   );
     }
 }
-export default withStyles(useStyles)(home);
+export default withStyles(useStyles)(userhome);

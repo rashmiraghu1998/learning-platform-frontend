@@ -246,7 +246,7 @@ handleSubmit(event) {
               <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox  onChange={this.handleChangeCheckbox} color="primary" />}
-                  label="create one more user"
+                  label="create one more course"
                 />
               </Grid>
             </Grid>

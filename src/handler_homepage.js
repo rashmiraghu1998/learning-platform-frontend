@@ -13,13 +13,8 @@ import Link from '@material-ui/core/Link';
 import { withStyles, ThemeProvider } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
-import UserSignup from './user_signup';
-import axios from 'axios';
-import Backdrop from '@material-ui/core/Backdrop';
-import CourseSignup from './course_signup';
-import Assign from './assign';
-import Fade from '@material-ui/core/Fade';
-import Modal from '@material-ui/core/Modal';
+import { Redirect } from "react-router-dom";
+import Course from './course'
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -89,31 +84,26 @@ const useStyles = theme => ({
   },
 });
 
-const types = [
+const courses = [
   {
-    title: 'Course Handlers',
-    description: ['Create them.', 'Provide their details to', 'start using the platform'],
-    buttonText: 'Start',
+    title: 'Design and analyses of algorithms',
+    description: ['Course to give a gist of', 'algorithms, solutions, questions around them ', 'and much more'],
     buttonVariant: 'outlined',
-    text: 'u',
-    buttonValue: 'user'
+    Coursecode: '86878',
+    Coursename: "raosuj"
   },
   {
-    title: 'Courses',
-    description: ['Create them.', 'Help the course handlers ','get started with courses'],
-    buttonText: 'Start',
+    title: '',
+    description: ['Course to give a gist of', 'algorithms, solutions, questions around them ', 'and much more'],
     buttonVariant: 'outlined',
-    text: 'c',
-    buttonValue: 'course'
+    Coursecode: '16cs089DSR'
   },
   {
-    title: 'Assign',
-    description: ['Assign','Start assigning',' courses to the course handlers. '],
-    buttonText: 'Start',
+    title: 'Design and analyses of algorithms',
+    description: ['Course to give a gist of', 'algorithms, solutions, questions around them ', 'and much more'],
     buttonVariant: 'outlined',
-    text: 'a',
-    buttonValue: 'assign'
-  }
+    Coursecode: '16cs089PSQ'
+  },
 ];
 const footers = [
   {
@@ -128,61 +118,46 @@ const footers = [
 ];
 
 
-class home extends Component {
+class handlerhome extends Component {
   constructor () {
     super();
     this.state = {
       fireRedirect: false,
-    course: <CourseSignup/>,
-    user: <UserSignup/>,
-    assign: <Assign/>,
-    redirect: "/homepage",
-    showModal: false,
-    open: false
-
+      redirect: "",
+      name: ""
     }
-    this.goToStore = this.goToStore.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    this.handleModalClose = this.handleModalClose.bind(this);
+    
   }
 
-  goToStore(event) {
+  goToStore(v1,v2, event) {
     var self = this;
     var value = event.currentTarget.value;
-    console.log(event);
-    console.log(value);
-    
-    if(value=="c")
-      this.setState({fireRedirect:true, redirect: this.state.course });
-    else if(value=="u")
-      this.setState({fireRedirect: true, redirect: this.state.user});
-    else 
-      this.setState({fireRedirect: true, redirect: this.state.assign});    
-
+    console.log(value)
+    this.setState({fireRedirect: true,redirect: v1, name: v2});   
     event.preventDefault();
   }
 
-  handleClose(event) {
-    this.setState({fireRedirect: false});
-  };
-  handleModalClose = ()=>{
-    this.setState({showModal: false})}
-
+  getRedirect(event){
+    console.log(this.state.redirect)
+  }
   render () {
 
     const { classes } = this.props;
-    
+     if(this.state.fireRedirect){
+            return <Course code={this.state.redirect} name={this.state.name} />;
+     }
+ 
         return (
     <React.Fragment>
       <CssBaseline />
       <AppBar position="static" color="default" elevation={0} className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6" color="inherit" noWrap className={classes.toolbarTitle}>
-            Admin
+        
           </Typography>
 
           <Button href="#" color="primary" variant="outlined" className={classes.link}>
-            Logout
+
           </Button>
         
         </Toolbar>
@@ -197,9 +172,9 @@ class home extends Component {
       
       <Container maxWidth="md" component="main">
         <Grid container spacing={5} alignItems="flex-end">
-          {types.map(tier => (
+          {courses.map(tier => (
             
-            <Grid item key={tier.title} xs={12} sm={tier.title === 'Enterprise' ? 12 : 6} md={4}>
+            <Grid item key={tier.title} xs={12}  sm={6} md={4}>
               <Card>
                 <CardHeader
                   title={tier.title}
@@ -219,8 +194,8 @@ class home extends Component {
                   </ul>
                 </CardContent>
                 <CardActions>
-                  <Button fullWidth variant={tier.buttonVariant} color="primary" value={tier.text} onClick={this.goToStore} >
-                    {tier.buttonText}
+                  <Button fullWidth variant={tier.buttonVariant} value={tier.Coursecode, tier.Coursename}  color="primary" onClick={this.goToStore.bind(this, tier.Coursecode,tier.Coursename)} >
+                    View
                   </Button>
                 </CardActions>
               </Card>
@@ -252,28 +227,11 @@ class home extends Component {
         <Box mt={5}>
           <Copyright />
         </Box>
-        <Modal
-              aria-labelledby="transition-modal-title"
-              aria-describedby="transition-modal-description"
-              className={classes.modal}
-              open={this.state.fireRedirect}
-              onClose={this.handleClose}
-              closeAfterTransition
-              BackdropComponent={Backdrop}
-              BackdropProps={{
-                timeout: 500,
-              }}
-            >
-              <Fade in={this.state.fireRedirect} >
-                <div className={classes.paper}>
-                  {this.state.redirect}
-                </div>
-              </Fade>
-            </Modal>
+
       </Container>
       {/* End footer */}
     </React.Fragment>
   );
     }
 }
-export default withStyles(useStyles)(home);
+export default withStyles(useStyles)(handlerhome);
