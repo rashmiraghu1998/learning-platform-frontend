@@ -15,6 +15,7 @@ import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import UserSignup from './user_signup';
 import axios from 'axios';
+import AddStudents from './add_students';
 import Backdrop from '@material-ui/core/Backdrop';
 import CourseSignup from './course_signup';
 import Assign from './assign';
@@ -99,6 +100,14 @@ const types = [
     buttonValue: 'user'
   },
   {
+    title: 'Students',
+    description: ['Add them.', 'Provide email addresses', ' to invite them to the platform'],
+    buttonText: 'Start',
+    buttonVariant: 'outlined',
+    text: 's',
+    buttonValue: 'student'
+  },
+  {
     title: 'Courses',
     description: ['Create them.', 'Help the course handlers ','get started with courses'],
     buttonText: 'Start',
@@ -153,11 +162,13 @@ class home extends Component {
     console.log(value);
     
     if(value=="c")
-      this.setState({fireRedirect:true, redirect: this.state.course });
+      this.setState({fireRedirect:true, redirect: <CourseSignup handleModalClose = {this.handleClose}/> });
     else if(value=="u")
-      this.setState({fireRedirect: true, redirect: this.state.user});
+      this.setState({fireRedirect: true, redirect: <UserSignup handleModalClose = {this.handleClose}/>});
+    else if(value=="s")
+      this.setState({fireRedirect: true, redirect: <AddStudents handleModalClose = {this.handleClose}/>});
     else 
-      this.setState({fireRedirect: true, redirect: this.state.assign});    
+      this.setState({fireRedirect: true, redirect: <Assign handleModalClose = {this.handleClose}/>});    
 
     event.preventDefault();
   }
@@ -181,7 +192,7 @@ class home extends Component {
             Admin
           </Typography>
 
-          <Button href="#" color="primary" variant="outlined" className={classes.link}>
+          <Button href="/admin" color="primary" variant="outlined" className={classes.link}>
             Logout
           </Button>
         

@@ -17,7 +17,6 @@ import { Redirect } from "react-router-dom";
 import Fade from '@material-ui/core/Fade';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
-import StudentSignup from './student_signup';
 function Copyright() {
     return (
       <Typography variant="body2" color="textSecondary" align="center">
@@ -113,45 +112,31 @@ function Copyright() {
  
   });
 
-class UserLogin extends Component {
+class StudentSignup extends Component {
     
     constructor(props) {
         super(props);
-        this.state = {email: '', password: '',  loginStatus:false,       fireRedirect: false,
+        this.state = {email: '', password: '',  loginStatus:false,    name: "",   fireRedirect: false,
 
-        user: <StudentSignup handleModalClose={this.handleModalClose} />, id:'', username: '',
+       id:'', username: '',
       
-        redirect: "/homepage",
+        redirect: "/user",
         showModal: false,
         open: false
       };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangeValue = this.handleChangeValue.bind(this);
-        this.goToStore = this.goToStore.bind(this);
+        this.handleChangeName = this.handleChangeName.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
-  }
-
-  goToStore(event) {
-    var self = this;
-    var value = event.currentTarget.value;
-    console.log(event);
-    console.log(value);
-    
-    if(value=="u")
-      this.setState({fireRedirect: true, redirect: this.state.user});
-    else 
-      this.setState({fireRedirect: true, redirect: this.state.user});    
-
-    event.preventDefault();
   }
 
   handleClose(event) {
     this.setState({fireRedirect: false});
   };
   handleModalClose = ()=>{
-    this.setState({showModal: false, fireRedirect: false})}
+    this.setState({showModal: false})}
 
     
       handleChange(event) {
@@ -159,6 +144,9 @@ class UserLogin extends Component {
       }
        handleChangeValue(event) {
         this.setState({password: event.target.value});
+      }  
+      handleChangeName(event) {
+        this.setState({name: event.target.value});
       }  
         
     handleSubmit(event) {
@@ -168,27 +156,22 @@ class UserLogin extends Component {
             var payload={
             "id": this.state.email,
             "type": "student",
-            "password":this.state.password
+            "password":this.state.password,
+            "name": this.state.name
             }
-            axios.post(apiBaseUrl+"user/login", payload)
+            axios.post(apiBaseUrl+"user/_sign_up", payload)
             .then(function (response) {
             console.log(response);
 
             if(response.status == 200){
             console.log("Login successful");
-            window.bearer_token = "Bearer " +" "+response.data.token;
-            localStorage.setItem("bearer_token", window.bearer_token)
-                    
-        localStorage.setItem("username", response.data.user.name)
-        localStorage.setItem("emailId", response.data.user.id)
-
-        self.setState({loginStatus:true, id: response.data.user.id, username: response.data.user.name}); 
-            self.setState({loginStatus:true, id: response.data.user.id, username: response.data.user.name}); 
+            self.props.handleModalClose();
             }
             })
             .catch(function (error) {
             console.log(error);
-            alert("Something seems to be wrong....\nPlease retry with a different username/password\nYou can also try signing up")
+            alert("Something seems to be wrong....\nPlease retry later")
+            self.props.handleModalClose();
             });
 
             event.preventDefault();
@@ -197,8 +180,8 @@ class UserLogin extends Component {
            
     render() {
         const { classes } = this.props;
-        if(this.state.loginStatus){
-            return <Redirect to={"user-homepage/" + this.state.id + "/" +this.state.username  } />
+        if(this.state.fireRedirect){
+            return <Redirect to={this.redirect} />
          }
  
         return (
@@ -224,6 +207,18 @@ class UserLogin extends Component {
             value={this.state.email} onChange={this.handleChange}
             autoFocus
           />
+            <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="Name"
+            name="name"
+            autoComplete="name"
+            value={this.state.name} onChange={this.handleChangeName}
+            autoFocus
+          />
           <TextField
             variant="outlined"
             margin="normal"
@@ -247,43 +242,13 @@ class UserLogin extends Component {
             color="primary"
             className={classes.submit}
           >
-            Sign In
+            Sign Up
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2" value="u" onClick={this.goToStore}>
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
         </form>
       </div>
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Modal
-    aria-labelledby="transition-modal-title"
-    aria-describedby="transition-modal-description"
-    className={classes.modal}
-    open={this.state.fireRedirect}
-    onClose={this.handleClose}
-    closeAfterTransition
-    BackdropComponent={Backdrop}
-    BackdropProps={{
-      timeout: 500,
-    }}
-  >
-    <Fade in={this.state.fireRedirect} >
-      <div className={classes.papers}>
-        {this.state.redirect}
-      </div>
-    </Fade>
-  </Modal>
     
     </Container>
    
@@ -293,4 +258,4 @@ class UserLogin extends Component {
     }
 
 }
-export default withStyles(useStyles)(UserLogin);
+export default withStyles(useStyles)(StudentSignup);

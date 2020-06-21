@@ -14,6 +14,10 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Redirect } from "react-router-dom";
+import Fade from '@material-ui/core/Fade';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import HandlerSignup from './handler_signup';
 function Copyright() {
     return (
       <Typography variant="body2" color="textSecondary" align="center">
@@ -26,8 +30,69 @@ function Copyright() {
       </Typography>
     );
   }
-  
   const useStyles = theme => ({
+    '@global': {
+      ul: {
+        margin: 0,
+        padding: 0,
+        listStyle: 'none',
+      },
+    },
+    appBar: {
+      borderBottom: `1px solid ${theme.palette.divider}`,
+    },
+    toolbar: {
+      flexWrap: 'wrap',
+    },
+    toolbarTitle: {
+      flexGrow: 1,
+    },
+    link: {
+      margin: theme.spacing(1, 1.5),
+    },
+    heroContent: {
+      padding: theme.spacing(8, 0, 6),
+    },
+    cardHeader: {
+      backgroundColor:
+        theme.palette.type === 'dark' ? theme.palette.grey[700] : theme.palette.grey[200],
+    },
+
+    modal: {
+    
+  
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      overflow: 'auto'
+    },
+    papers: {
+      backgroundColor: theme.palette.background.paper,
+      border: '2px solid #000',
+      boxShadow: theme.shadows[3],
+      padding: theme.spacing(2, 4, 3),
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    
+    },
+    cardPricing: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'baseline',
+      marginBottom: theme.spacing(2),
+    },
+    footer: {
+      borderTop: `1px solid ${theme.palette.divider}`,
+      marginTop: theme.spacing(8),
+      paddingTop: theme.spacing(3),
+      paddingBottom: theme.spacing(3),
+      [theme.breakpoints.up('sm')]: {
+        paddingTop: theme.spacing(6),
+        paddingBottom: theme.spacing(6),
+      },
+    },
+
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
@@ -44,19 +109,50 @@ function Copyright() {
       },
       submit: {
         margin: theme.spacing(3, 0, 2),
-      },
+      }, 
+ 
   });
 
 class HandlerLogin extends Component {
     
     constructor(props) {
         super(props);
-        this.state = {email: '', password: '',  loginStatus:false};
+        this.state = {email: '', password: '',  loginStatus:false,       fireRedirect: false,
+
+        user: <HandlerSignup handleModalClose={this.handleModalClose} />, id:'', username: '',
+      
+        redirect: "/homepage",
+        showModal: false,
+        open: false
+      };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChangeValue = this.handleChangeValue.bind(this);
-        
-      }
+        this.goToStore = this.goToStore.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleModalClose = this.handleModalClose.bind(this);
+  }
+
+  goToStore(event) {
+    var self = this;
+    var value = event.currentTarget.value;
+    console.log(event);
+    console.log(value);
+    
+    if(value=="u")
+      this.setState({fireRedirect: true, redirect: this.state.user});
+    else 
+      this.setState({fireRedirect: true, redirect: this.state.user});    
+
+    event.preventDefault();
+  }
+
+  handleClose(event) {
+    this.setState({fireRedirect: false});
+  };
+  handleModalClose = ()=>{
+    this.setState({showModal: false, fireRedirect: false})}
+
     
       handleChange(event) {
         this.setState({email: event.target.value}); 
@@ -66,33 +162,33 @@ class HandlerLogin extends Component {
       }  
         
     handleSubmit(event) {
-            var apiBaseUrl = "http://localhost:5000/handler/";
+            var apiBaseUrl = window.url_prefix+"/college/BMS/branch/CSE/sem/5/";
             var self = this;
             console.log(this);
             var payload={
-            "email":this.state.email,
+            "id": this.state.email,
+            "type": "handler",
             "password":this.state.password
             }
-            axios.post(apiBaseUrl+'login', payload)
+            axios.post(apiBaseUrl+"user/login", payload)
             .then(function (response) {
             console.log(response);
+
             if(response.status == 200){
             console.log("Login successful");
-            self.setState({loginStatus:true}); 
-            }
-            else if(response.status == 204){
-            console.log("Username password do not match");
-            alert("username password do not match");
-            self.setState({loginStatus:false});
-            }
-            else{
-            console.log("Username does not exist");
-            alert("Username does not exist");
-            self.setState({loginStatus:false});
+            window.bearer_token = "Bearer " +" "+response.data.token;
+            localStorage.setItem("bearer_token", window.bearer_token)
+                    
+        localStorage.setItem("username", response.data.user.name)
+        localStorage.setItem("emailId", response.data.user.id)
+
+        self.setState({loginStatus:true, id: response.data.user.id, username: response.data.user.name}); 
+            self.setState({loginStatus:true, id: response.data.user.id, username: response.data.user.name}); 
             }
             })
             .catch(function (error) {
             console.log(error);
+            alert("Something seems to be wrong....\nPlease retry with a different username/password\nYou can also try signing up")
             });
 
             event.preventDefault();
@@ -102,7 +198,7 @@ class HandlerLogin extends Component {
     render() {
         const { classes } = this.props;
         if(this.state.loginStatus){
-            return <Redirect to='/handler-homepage'  />
+            return <Redirect to={"handler-homepage"  } />
          }
  
         return (
@@ -160,7 +256,7 @@ class HandlerLogin extends Component {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="#" variant="body2" value="u" onClick={this.goToStore}>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
@@ -170,9 +266,27 @@ class HandlerLogin extends Component {
       <Box mt={8}>
         <Copyright />
       </Box>
-    </Container>
-
+      <Modal
+    aria-labelledby="transition-modal-title"
+    aria-describedby="transition-modal-description"
+    className={classes.modal}
+    open={this.state.fireRedirect}
+    onClose={this.handleClose}
+    closeAfterTransition
+    BackdropComponent={Backdrop}
+    BackdropProps={{
+      timeout: 500,
+    }}
+  >
+    <Fade in={this.state.fireRedirect} >
+      <div className={classes.papers}>
+        {this.state.redirect}
+      </div>
+    </Fade>
+  </Modal>
     
+    </Container>
+   
         );
 
 

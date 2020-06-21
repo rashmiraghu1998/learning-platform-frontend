@@ -52,13 +52,13 @@ const useStyles = (theme => ({
 class Assign extends Component {
   constructor(props) {
     super(props);
-    this.state = {users: [], courses: [], assigned: [], handler: "",  check: false, redirect: false};
+    this.state = {users: [], courses: [], assigned: [], handler: "", url: "/homepage", check: false, redirect: false};
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleChangeCheckbox = this.handleChangeCheckbox.bind(this);
     this.onTagsChange = this.onTagsChange.bind(this);
-    this.getUsers();
-    this.getCourses();
+    this.ids = this.ids.bind(this);
+    this.getCoursesAndUsers();
   }
 
   handleChangeValue = (event, values) => {
@@ -86,96 +86,94 @@ class Assign extends Component {
 
     
 handleSubmit(event) {
-        var apiBaseUrl = "http://localhost:5000/";
-        var self = this;
-        console.log(this);
-        var payload=
-          {
-            "handler": this.state.handler,
-           "course": this.state.assigned
-           }
-        
-        axios.post(apiBaseUrl+'assign', payload)
-        .then(function (response) {
-        console.log(response);
-        if(response.status == 200){
-        console.log("Successfully added");
-        self.setState({redirect:false}); 
-        
-         }
-        else{
-        console.log("Error");
-        alert("Error");
-        self.setState({redirect:false}); 
-        }
-        })
-        .catch(function (error) {
-        console.log(error);
-        });
-        
-        event.preventDefault();
-        }
+  var self = this;
+  var apiBaseUrl = window.url_prefix+"/college/BMS/branch/CSE/sem/5/";
+  {this.state.assigned.map(e=>{
+
+    var payload={
+      'handler': this.state.handler
+    }
+
+    var headers = {
+      "Authorization": localStorage.getItem("bearer_token")
+    }
+  axios.patch(apiBaseUrl+"course/"+e, payload, {headers: headers})
+  .then(function (response) {
+  if(response.status == 200){
+    console.log("success")
+    self.setState({redirect: true})
+   
+   }
+
+  })
+  .catch(function (error) {
+  console.log(error);
+  alert("You have been logged out due to security reasons...You will be redirect to the login page if you click on 'OK'");
+  self.setState({redirect:true, url: "/admin" }); 
+  self.props.handleModalClose();
+  });
+})}
+if(self.state.check)
+{
+  this.setState( {users: [], courses: [],handler: "", assigned: [], redirect: false});
+}
+else
+{
+  this.props.handleModalClose();
+}
+  event.preventDefault();
   
-        getUsers(){
-          var self = this;
-        var apiBaseUrl = "http://localhost:5000/"
-        axios.get(apiBaseUrl+'get_users')
-        .then(function (response) {
-        console.log(response);
-        if(response.status == 200){
-          console.log(response);
-          self.setState({users: response.data})
-          var users = [];
-          for(var i=0;i<response.data.length;i++)
-          {
-            console.log(response.data.CourseHandlerName);
-            users.push(response.data[i].CourseHandlerName+" ("+response.data[i].EmailId+")");
-          }
-          self.setState({users: users})
-          console.log(self.state)
-         }
-        else{
-        console.log("Error");
-        alert("Error");
-       
-        }
-        })
-        .catch(function (error) {
-        console.log(error);
-        });
-
-        event.preventDefault();
-        }
-       
-
-
-        getCourses(){
-          var self = this;
-        var apiBaseUrl = "http://localhost:5000/"
-        axios.get(apiBaseUrl+'get_courses')
-        .then(function (response) {
-        console.log(response);
-        if(response.status == 200){
-          console.log(response);
+}
+  
           
-          var courses = [];
-          for(var i=0;i<response.data.length;i++)
-          {
-            console.log(response.data.CourseName);
-            courses.push(response.data[i].CourseName+" ("+response.data[i].CourseCode+")");
+
+         ids(data, word) {
+          switch(word){
+            case "id": return data.map(function (d) {
+              return d.id})
+            case "user": return data.filter(d => d.handler !== "").map(d => {return d.handler}) 
+            
           }
-          self.setState({courses: courses})
-          console.log(self.state)
-         }
-        else{
-        console.log("Error");
-        alert("Error");
-       
+          
         }
-        })
-        .catch(function (error) {
-        console.log(error);
-        });
+          getCoursesAndUsers(){
+          var self = this;
+          var apiBaseUrl = window.url_prefix+"/college/BMS/branch/CSE/sem/5/";
+          var headers = {
+            "Authorization": localStorage.getItem("bearer_token")
+          }
+          axios.get(apiBaseUrl+"course", {headers: headers})
+          .then(function (response) {
+          if(response.status == 200){
+              console.log(response.data);
+              self.setState({courses: Array.from(new Set(self.ids(response.data.courses, "id")))})
+              console.log(self.state)
+           }
+
+          })
+          .catch(function (error) {
+          console.log(error);
+          alert("You have been logged out due to security reasons...You will be redirect to the login page if you click on 'OK'");
+          self.setState({redirect:true, url: "/admin" }); 
+          self.props.handleModalClose();
+      
+          });
+
+          axios.get(apiBaseUrl+"user"+"?type=handler", {headers: headers})
+          .then(function (response) {
+          if(response.status == 200){
+              console.log(response.data);
+              self.setState({users: Array.from(new Set(self.ids(response.data.users, "id")))})
+              console.log(self.state)
+           }
+          else{
+          console.log("Error");
+          alert("Error");        
+          }
+          })
+          .catch(function (error) {
+          console.log(error);
+          });
 
         event.preventDefault();
         }
@@ -184,7 +182,7 @@ handleSubmit(event) {
         const { classes } = this.props;
         console.log(this.state.users)
         if(this.state.redirect){
-          return <Redirect to='/homepage'  />
+          return <Redirect to={this.state.url}  />
        }
 
         return (<Container component="main" maxWidth="xs">

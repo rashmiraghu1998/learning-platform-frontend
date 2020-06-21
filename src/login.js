@@ -65,38 +65,41 @@ class Login extends Component {
         this.setState({password: event.target.value});
       }  
         
-    handleSubmit(event) {
-            var apiBaseUrl = "http://localhost:5000/admin/";
-            var self = this;
-            console.log(this);
-            var payload={
-            "email":this.state.email,
-            "password":this.state.password
-            }
-            axios.post(apiBaseUrl+'login', payload)
-            .then(function (response) {
-            console.log(response);
-            if(response.status == 200){
-            console.log("Login successful");
-            self.setState({loginStatus:true}); 
-            }
-            else if(response.status == 204){
-            console.log("Username password do not match");
-            alert("username password do not match");
-            self.setState({loginStatus:false});
-            }
-            else{
-            console.log("Username does not exist");
-            alert("Username does not exist");
-            self.setState({loginStatus:false});
-            }
-            })
-            .catch(function (error) {
-            console.log(error);
-            });
+       
+      handleSubmit(event) {
+        var apiBaseUrl = window.url_prefix+"/college/BMS/branch/CSE/sem/5/";
+        var self = this;
+        console.log(this);
+        var payload={
+        "id": this.state.email,
+        "type": "admin",
+        "password":this.state.password
+        }
+        axios.post(apiBaseUrl+"user/login", payload)
+        .then(function (response) {
+        console.log(response);
 
-            event.preventDefault();
-            }
+        if(response.status == 200){
+        console.log("Login successful");
+        window.bearer_token = "Bearer " +" "+response.data.token;
+        localStorage.setItem("bearer_token", window.bearer_token)
+        
+        localStorage.setItem("username", response.data.user.name)
+        localStorage.setItem("emailId", response.data.user.id)
+
+        self.setState({loginStatus:true, id: response.data.user.id, username: response.data.user.name}); 
+        }
+       
+       
+        })
+        .catch(function (error) {
+        console.log(error);
+        alert("Something seems to be wrong....\n Please retry with a different username/password")
+        });
+
+        event.preventDefault();
+        }
+  
       
            
     render() {
@@ -153,18 +156,7 @@ class Login extends Component {
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
+  
         </form>
       </div>
       <Box mt={8}>

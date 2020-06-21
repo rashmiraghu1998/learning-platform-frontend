@@ -47,10 +47,10 @@ const useStyles = (theme => ({
   },
 }));
 
-class UserSignup extends Component {
+class AddStudents extends Component {
   constructor(props) {
     super(props);
-    this.state = {email: '', phno: '',  name: "", check: false, redirect: false, url: "/homepage"};
+    this.state = {email: '', phno: '',  name: "", check: false, redirect: false, url: "/homepage", emails:[]};
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
@@ -67,7 +67,7 @@ class UserSignup extends Component {
 
   handleChangeName(event)
   {
-    this.setState({name: event.target.value})
+    this.setState({emails: event.target.value})
   }
   handleChangeCheckbox(event)
   {
@@ -80,8 +80,8 @@ class UserSignup extends Component {
           var self = this;
           console.log(this);
           var payload={
-          "id_list": [this.state.email],
-          "type": "handler"
+          "id_list": this.state.emails.split(','),
+          "user_type": "student"
           }
           console.log(payload)
       
@@ -89,10 +89,11 @@ class UserSignup extends Component {
           .then(function (response) {
           console.log(response);
           if(response.status == 200){
-          console.log("Successfully created user");   
+          console.log("Successfully added students");   
           self.setState({redirect:false}); 
           self.props.handleModalClose();
           }
+       
           })
           .catch(function (error) {
           console.log(error);
@@ -110,7 +111,7 @@ class UserSignup extends Component {
     render() {
         const { classes } = this.props;
         if(this.state.redirect){
-          return <Redirect to={this.state.url} />
+          return <Redirect to={this.state.url}  />
        }
         return (<Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -119,30 +120,14 @@ class UserSignup extends Component {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Create user
+         Invite students by adding their emails
           </Typography>
           <form className={classes.form} onSubmit={this.handleSubmit} noValidate>
-            <Grid container spacing={2}>      
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="email_id"
-                  label="Email Address"
-                  value={this.state.email} onChange={this.handleChange}
-                  name="email_id"
-
-                  autoComplete="email"
-                />
+            <Grid container spacing={2}>
+              <Grid item xs={12} >
+             <input multiple id="emails" labels="emails" placeholder="Add emails" value={this.state.emails} onChange={this.handleChangeName}/>
               </Grid>
-
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox  onChange={this.handleChangeCheckbox} color="primary" />}
-                  label="create one more user"
-                />
-              </Grid>
+            
             </Grid>
             <Button
               type="submit"
@@ -151,7 +136,7 @@ class UserSignup extends Component {
               color="primary"
               className={classes.submit}
             >
-              Sign Up
+              Add
             </Button>
             <Grid container justify="flex-end">
               <Grid item>
@@ -169,4 +154,4 @@ class UserSignup extends Component {
 
 }
 
-export default withStyles(useStyles)(UserSignup);
+export default withStyles(useStyles)(AddStudents);

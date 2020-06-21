@@ -14,7 +14,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
 import HandlerHome from './handler_homepage'
 import Button from '@material-ui/core/Button';
-import Details from './Details'
+import HandlerDetails from './Handler_details'
 import Users from './users';
 const drawerWidth = 240;
 
@@ -23,6 +23,7 @@ const useStyles = (theme => ({
     display: 'flex',
   },
   appBar: {
+    color: "#405d86",
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -159,7 +160,7 @@ class HandlerProfile extends Component {
           </div>
           <Divider />
           <List>
-            {['Profile', 'Home', 'Users', 'Logout'].map((text, index) => (
+            {['Profile', 'Home', 'Logout'].map((text, index) => (
                        <Button fullWidth  color="primary" value={text} onClick={this.update} >
                        {text}
                      </Button>
@@ -179,20 +180,33 @@ class HandlerProfile extends Component {
         switch (this.state.profile) {
           case "Home":   
           console.log("home")
-          return <HandlerHome />;
+          return <Redirect to='/handler-homepage'/>
           case "Profile": 
           console.log("Profile")
-          return <Details/>;
+          return <HandlerDetails/>
           case "Logout":
             console.log("here logout")
-            return <Redirect to='/'  />
-          case "Users":
-            return <Users/>
-          default: 
-          //console.log("Profile")
-          return <HandlerHome/>;
+            console.log("here logout")
+            localStorage.setItem("bearer_token", "Bearer")
+            localStorage.setItem('emailId', "")
+            localStorage.setItem("username", "")
+            return <Redirect to='/handler'  />
+         
         }
       })()}
+                {(() => {
+        switch (this.props.profile) {
+         case "course": 
+          return null
+          case "Profile": 
+          console.log("Profile")
+          return <HandlerDetails/>
+          default: 
+          return <HandlerHome/>
+         
+        }
+      })()}
+
         </main>   
       </div>
     );

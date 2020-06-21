@@ -8,11 +8,13 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
+import axios from 'axios';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import { withStyles, ThemeProvider } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
+import HandlerToolbar from './handler_toolbar';
 import { Redirect } from "react-router-dom";
 import Course from './course'
 function Copyright() {
@@ -35,6 +37,10 @@ const useStyles = theme => ({
       padding: 0,
       listStyle: 'none',
     },
+  },
+
+  Card: {
+    minHeight: '20%',
   },
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -84,27 +90,8 @@ const useStyles = theme => ({
   },
 });
 
-const courses = [
-  {
-    title: 'Design and analyses of algorithms',
-    description: ['Course to give a gist of', 'algorithms, solutions, questions around them ', 'and much more'],
-    buttonVariant: 'outlined',
-    Coursecode: '86878',
-    Coursename: "raosuj"
-  },
-  {
-    title: '',
-    description: ['Course to give a gist of', 'algorithms, solutions, questions around them ', 'and much more'],
-    buttonVariant: 'outlined',
-    Coursecode: '16cs089DSR'
-  },
-  {
-    title: 'Design and analyses of algorithms',
-    description: ['Course to give a gist of', 'algorithms, solutions, questions around them ', 'and much more'],
-    buttonVariant: 'outlined',
-    Coursecode: '16cs089PSQ'
-  },
-];
+const courses = [];
+
 const footers = [
   {
     title: 'Company',
@@ -117,23 +104,52 @@ const footers = [
 
 ];
 
-
-class handlerhome extends Component {
-  constructor () {
-    super();
+class Handlerhome extends Component {
+  constructor (props) {
+    super(props);
     this.state = {
       fireRedirect: false,
       redirect: "",
-      name: ""
+      name: "",
+      courses: [],
+      course_code: "",
+      id: localStorage.getItem("emailId"),
+      username: this.props.username
+      
     }
-    
+    this.getCoursesByHandler();  
   }
 
-  goToStore(v1,v2, event) {
+  getCoursesByHandler() {
     var self = this;
-    var value = event.currentTarget.value;
-    console.log(value)
-    this.setState({fireRedirect: true,redirect: v1, name: v2});   
+    var apiBaseUrl = window.url_prefix+"/college/BMS/branch/CSE/sem/5/";
+    var header = { "Authorization": localStorage.getItem("bearer_token")};
+    console.log(localStorage.getItem("emailId"))
+    axios.get(apiBaseUrl+"course?handler="+localStorage.getItem("emailId"),{
+      headers: header}  )
+    .then(function (response) {
+    if(response.status == 200){
+        console.log(response.data.courses);
+        self.setState({courses: response.data.courses})
+     }
+
+    })
+    .catch(function (error) {
+    console.log(error);
+    alert("You have been logged out due to security reasons...You will be redirect to the login page if you click on 'OK'");
+    self.setState({redirect:true, url: "/handler" }); 
+    self.props.handleModalClose();
+
+    });
+  
+    }
+
+
+  goToStore(v1, v2, event) {
+    var self = this;
+    console.log(v1)
+    localStorage.setItem("course_name", v2);
+    this.setState({fireRedirect: true,course_code: v1});   
     event.preventDefault();
   }
 
@@ -143,47 +159,39 @@ class handlerhome extends Component {
   render () {
 
     const { classes } = this.props;
+    courses = this.state.courses;
      if(this.state.fireRedirect){
-            return <Course code={this.state.redirect} name={this.state.name} />;
+            return   <Redirect to={"course/" + this.state.course_code } /> ;
      }
  
         return (
     <React.Fragment>
-      <CssBaseline />
-      <AppBar position="static" color="default" elevation={0} className={classes.appBar}>
-        <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" color="inherit" noWrap className={classes.toolbarTitle}>
-        
-          </Typography>
-
-          <Button href="#" color="primary" variant="outlined" className={classes.link}>
-
-          </Button>
-        
-        </Toolbar>
-      </AppBar>
+      <HandlerToolbar/>
+ 
       {/* Hero unit */}
-      <Container maxWidth="sm" component="main" className={classes.heroContent}>
+     
 
-        <Typography variant="h5" align="center" color="textSecondary" component="p">
+      {this.state.courses.length?   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+      <Container  maxHeight="md" component="main">
+        <Container maxWidth="sm" component="main" className={classes.heroContent}><Typography variant="h5" align="center" color="textSecondary" component="p">
         Please select one of these to proceed!!
-        </Typography>
+        </Typography> 
       </Container>
-      
-      <Container maxWidth="md" component="main">
         <Grid container spacing={5} alignItems="flex-end">
-          {courses.map(tier => (
-            
-            <Grid item key={tier.title} xs={12}  sm={6} md={4}>
+          {this.state.courses.map(tier => (
+           
+            <Grid item key={tier.name} md={4}>
               <Card>
                 <CardHeader
-                  title={tier.title}
-                  subheader={tier.subheader}
+                  title={tier.name}
+                  subheader={tier.id}
                   titleTypographyProps={{ align: 'center' }}
                   subheaderTypographyProps={{ align: 'center' }}
                   className={classes.cardHeader}
+                  maxHeight="30%"
                 />
-                <CardContent>
+                {/* <CardContent>
                   
                   <ul>
                     {tier.description.map(line => (
@@ -192,9 +200,9 @@ class handlerhome extends Component {
                       </Typography>
                     ))}
                   </ul>
-                </CardContent>
+                </CardContent> */}
                 <CardActions>
-                  <Button fullWidth variant={tier.buttonVariant} value={tier.Coursecode, tier.Coursename}  color="primary" onClick={this.goToStore.bind(this, tier.Coursecode,tier.Coursename)} >
+                  <Button fullWidth variant={tier.buttonVariant} value={tier.id, tier.name}  color="primary" onClick={this.goToStore.bind(this,tier.id, tier.name)} >
                     View
                   </Button>
                 </CardActions>
@@ -204,6 +212,7 @@ class handlerhome extends Component {
           ))}
         </Grid>
       </Container>
+      :null}
       {/* Footer */}
       <Container maxWidth="md" component="footer" className={classes.footer}>
         <Grid container spacing={4} justify="space-evenly">
@@ -234,4 +243,4 @@ class handlerhome extends Component {
   );
     }
 }
-export default withStyles(useStyles)(handlerhome);
+export default withStyles(useStyles)(Handlerhome);

@@ -14,7 +14,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
 import UserHome from './user_homepage'
 import Button from '@material-ui/core/Button';
-import Details from './Details'
+import UserDetails from './User_details'
 import Users from './users';
 const drawerWidth = 240;
 
@@ -91,7 +91,7 @@ function Copyright() {
 class UserProfile extends Component {
   constructor(props) {
     super(props);
-    this.state = {open: false, profile: "home"}
+    this.state = {open: false, profile: "home", emailId: props.match.params.emailId, username: props.match.params.username }
     this.update = this.update.bind(this);
   }
   update(event) {
@@ -139,7 +139,7 @@ class UserProfile extends Component {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap>
-             Admin
+             User
             </Typography>
           </Toolbar>
         </AppBar>
@@ -159,7 +159,7 @@ class UserProfile extends Component {
           </div>
           <Divider />
           <List>
-            {['Profile', 'Home', 'Users', 'Logout'].map((text, index) => (
+            {['Profile', 'Home', 'Logout'].map((text, index) => (
                        <Button fullWidth  color="primary" value={text} onClick={this.update} >
                        {text}
                      </Button>
@@ -182,12 +182,13 @@ class UserProfile extends Component {
           return <UserHome />;
           case "Profile": 
           console.log("Profile")
-          return <Details/>;
+          return <UserDetails emailId={this.state.emailId} username={this.state.username} />;
           case "Logout":
             console.log("here logout")
-            return <Redirect to='/'  />
-          case "Users":
-            return <Users/>
+            localStorage.setItem("bearer_token", "Bearer")
+            localStorage.setItem('emailId', "")
+            localStorage.setItem("username", "")
+            return <Redirect to='/user'  />
           default: 
           //console.log("Profile")
           return <UserHome/>;

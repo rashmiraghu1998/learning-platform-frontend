@@ -101,7 +101,6 @@ class Profile extends Component {
     console.log(value);
     console.log(event)
     this.setState({profile: event.currentTarget.value})
-  
     event.preventDefault();
   }
 
@@ -185,7 +184,11 @@ class Profile extends Component {
           return <Details/>;
           case "Logout":
             console.log("here logout")
-            return <Redirect to='/'  />
+            console.log("here logout")
+            localStorage.setItem("bearer_token", "Bearer")
+            localStorage.setItem('emailId', "")
+            localStorage.setItem("username", "")
+            return <Redirect to='/admin'  />
           case "Users":
             return <Users/>
           default: 

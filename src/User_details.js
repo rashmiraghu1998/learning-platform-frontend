@@ -5,13 +5,12 @@ import axios from 'axios';
 import { Container } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { Redirect } from "react-router-dom";
-
 import TextField from '@material-ui/core/TextField';
-export default class Details extends Component {
+export default class UserDetails extends Component {
   constructor(props)
   {
     super(props)
-    this.state = {password: "", username:localStorage.getItem("username"), url: "/homepage"}
+    this.state = {password: "", username: this.props.username, url: "/homepage"}
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -29,18 +28,17 @@ export default class Details extends Component {
     var payload={
     "new_password":this.state.password
     }
-    axios.post(apiBaseUrl+"user/_change_password", payload, {headers: {"Authorization": localStorage.getItem("bearer_token")} })
+    axios.post(apiBaseUrl+"user/_change_password", payload, {headers: {"Authorization": localStorage.getItem("bearer_token") } })
     .then(function (response) {
       console.log(response);
       if(response.status == 200){
       console.log("Successfully added");
        }
-
       })
       .catch(function (error) {
       console.log(error);
       alert("You have been logged out due to security reasons...You will be redirect to the login page if you click on 'OK'");
-      self.setState({redirect:true, url: "/admin" }); 
+      self.setState({redirect:true, url: "/user" }); 
       self.props.handleModalClose();
   
       });
@@ -49,9 +47,11 @@ export default class Details extends Component {
       }
 
   render() {
-        if(this.state.redirect){
-          return <Redirect to={this.state.url}  />
-       }
+
+    if(this.state.redirect)
+    {
+      return <Redirect to={this.state.url}/>
+    }
     return (
       
       <div>
@@ -60,7 +60,8 @@ export default class Details extends Component {
   direction="column"
   alignItems="center"
   justify="center"
-  style={{ minHeight: '100vh' }}>
+  
+  style={{ minHeight: '100vh'}}>
         <AccountCircleIcon style={{ fontSize: 200} }/>
         <br/>
         <br/>
@@ -71,7 +72,7 @@ export default class Details extends Component {
         <h4 >User ID: </h4> 
         </Grid>
         <Grid item  xs={5}>
-          <input  value= {localStorage.getItem("emailId")} disabled></input>
+          <input  value= {this.props.emailId} disabled></input>
         
       </Grid>
    
@@ -84,7 +85,7 @@ export default class Details extends Component {
         <h4 >User Name: </h4> 
         </Grid>
         <Grid item  xs={5}>
-          <input  value= {localStorage.getItem("username")} onChange={this.handleChange} disabled></input>
+          <input  value= {this.state.username} onChange={this.handleChange} disabled></input>
         
       </Grid>
 </Grid>

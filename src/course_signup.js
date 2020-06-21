@@ -50,7 +50,7 @@ const useStyles = (theme => ({
 class CourseSignup extends Component {
   constructor(props) {
     super(props);
-    this.state = {course_name: "", course_code: "", credits: "", syllabus_file_name: "", syllabus_file_type: "mime", url: "", files: "", semester:"", branch: "", check: false, redirect: false};
+    this.state = {course_name: "", course_code: "", credits: "", url: "/homepage", syllabus_file_name: "", syllabus_file_type: "mime", url: "", files: "", semester:"", branch: "", check: false, redirect: false};
     this.handleChangeName = this.handleChangeName.bind(this);
     this.handleChangeCode = this.handleChangeCode.bind(this);
     this.handleChangeCredits = this.handleChangeCredits.bind(this);
@@ -90,40 +90,32 @@ class CourseSignup extends Component {
 
     
 handleSubmit(event) {
-        var apiBaseUrl = "http://localhost:5000/";
+        var apiBaseUrl = window.url_prefix+"/college/BMS/branch/CSE/sem/5/";
         var self = this;
-        console.log(this);
+        console.log(self);
         console.log(self.state.files)
-
-        var payload=
-          {
-            "course_name": this.state.course_name,
-            "course_code": this.state.course_code,
-            "credits": this.state.credits,
-            "syllabus_file_name": this.state.course_code+"_"+this.state.course_name,
-            "syllabus_file_type": "mime",
-            "semester": this.state.semester,
-            "branch": this.state.branch
-          }
-        var url;
-
         
-        axios.post(apiBaseUrl+"upload_course", payload)
-        .then(function (response) {
-        if(response.status == 200){
-        console.log("Successfully added");
-        self.setState({redirect:false, url: response.data.SyllabusUrl});    
-        self.handle();
-         }
-        else{
-        console.log("Error");
-        alert("Error");
-        self.setState({redirect:false}); 
-        }
-        })
-        .catch(function (error) {
-        console.log(error);
-        });
+      
+          var headers = {
+            "Authorization": localStorage.getItem("bearer_token")
+          }
+        self.handle(); 
+        // axios.post(apiBaseUrl+"course", payload, {headers: headers})
+        // .then(function (response) {
+        // if(response.status == 200){
+        // console.log("Successfully added");
+        // self.setState({redirect:false, url: response.data.location});  
+        
+        //  }
+
+        // })
+        // .catch(function (error) {
+        // console.log(error);
+        // alert("You have been logged out due to security reasons...You will be redirect to the login page if you click on 'OK'");
+        // self.setState({redirect:true, url: "/admin" }); 
+        // self.props.handleModalClose();
+    
+        // });
         if(self.state.check)
         {
           this.setState( {course_name: "", course_code: "", credits: "", syllabus_file_name: "", syllabus_file_type: "", url: "", file: "", semester:"", branch: "", redirect: false});
@@ -137,20 +129,52 @@ handleSubmit(event) {
 
       handle() {
         var self = this;
+        var apiBaseUrl = window.url_prefix+"/college/BMS/branch/CSE/sem/5/";
+        var self = this;
+        console.log(self);
+        console.log(self.state.files)
+        var bodyFormData = new FormData();
+        bodyFormData.append("file", self.state.files)
+          var headers = {
+            "Authorization": localStorage.getItem("bearer_token")
+          }
         console.log(self)
-        axios.put(self.state.url, self.state.files)
+        axios.post(apiBaseUrl+"course/upload", bodyFormData, {headers: headers})
         .then(function (response) {
         if(response.status == 200){
         console.log("Successfully added");
+        // payload.append("object_name", response.data.object_name)
+        axios.post(apiBaseUrl+"course",         {
+          "name": self.state.course_name,
+          "code": self.state.course_code,
+          "credits": self.state.credits,
+          "syllabus_file_name": self.state.course_code+"_"+self.state.course_name,
+          "syllabus_file_type": self.state.files.type,
+          "object_name": response.data.object_name
+        }, {headers: headers})
+        .then(function (response) {
+        if(response.status == 200){
+        console.log("Successfully added");
+        // self.setState({redirect:false, url: response.data.location});  
          }
-        else{
-        console.log("Error");
-        alert("Error");
-       
-        }
+
         })
         .catch(function (error) {
         console.log(error);
+        alert("You have been logged out due to security reasons...You will be redirect to the login page if you click on 'OK'");
+        self.setState({redirect:true, url: "/admin" }); 
+        self.props.handleModalClose();
+    
+        });
+         }
+
+        })
+        .catch(function (error) {
+        console.log(error);
+        alert("You have been logged out due to security reasons...You will be redirect to the login page if you click on 'OK'");
+        self.setState({redirect:true, url: "/admin" }); 
+        self.props.handleModalClose();
+    
         });
         console.log(self.state)
         event.preventDefault();
@@ -161,7 +185,7 @@ handleSubmit(event) {
     render() {
         const { classes } = this.props;
         if(this.state.redirect){
-          return <Redirect to='/homepage'  />
+          return <Redirect to={this.state.url}  />
        }
         return (<Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -220,29 +244,8 @@ handleSubmit(event) {
 <input 
               color="primary" class="submit" type="file" name="file" onChange={this.onChangeHandler}/>
 </Button>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="semester"
-                  label="Semester"
-                  value={this.state.semester} onChange={this.handleChangeSem}
-                  name="semester"
-                />
-              </Grid>
 
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="branch"
-                  label="Branch"
-                  value={this.state.branch} onChange={this.handleChangeBranch}
-                  name="branch"
-                />
-              </Grid>
+     
               <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox  onChange={this.handleChangeCheckbox} color="primary" />}

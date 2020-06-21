@@ -28,6 +28,6 @@
   
         setInterval(function () {
           $('.slider').slider('next');
-        }, 5000);
+        }, 8080);
       });
   
