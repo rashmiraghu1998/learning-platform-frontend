@@ -1,5 +1,5 @@
- 
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 import { ParallaxProvider, Parallax } from 'react-scroll-parallax';
 import { withStyles } from '@material-ui/core/styles';
 import './first_page.css'
@@ -206,37 +206,37 @@ const Admin = () => (
 
 <Grid container >
     <Grid item xs={4}>
-    <a
-        href= {'/admin'}
+    <Link
+        to= {'/admin'}
         rel="noopener"
         // target="_blank"
         type="button"
         className="Admin"
     >
         Admin
-    </a>
+    </Link>
     </Grid>
     <Grid item xs={4}>
-    <a
-        href= {'/user'}
+    <Link
+        to= {'/user'}
         rel="noopener"
         // target="_blank"
         type="button"
         className="Student"
     >
         Student
-    </a>
+    </Link>
     </Grid>
     <Grid item xs={4}>
-    <a
-        href= {'/handler'}
+    <Link
+        to= {'/handler'}
         rel="noopener"
         // target="_blank"
         type="button"
         className="Handler"
     >
         Handler
-    </a>
+    </Link>
     </Grid>
 
     <h1  className="intro"><p >Login into one of the interfaces</p>
