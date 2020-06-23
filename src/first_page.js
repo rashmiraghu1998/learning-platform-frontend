@@ -207,7 +207,7 @@ const Admin = () => (
 <Grid container >
     <Grid item xs={4}>
     <a
-        href= {window.frontend_url+'/admin'}
+        href= {'/admin'}
         rel="noopener"
         // target="_blank"
         type="button"
@@ -218,7 +218,7 @@ const Admin = () => (
     </Grid>
     <Grid item xs={4}>
     <a
-        href= {window.frontend_url+'/user'}
+        href= {'/user'}
         rel="noopener"
         // target="_blank"
         type="button"
@@ -229,7 +229,7 @@ const Admin = () => (
     </Grid>
     <Grid item xs={4}>
     <a
-        href= {window.frontend_url+'/handler'}
+        href= {'/handler'}
         rel="noopener"
         // target="_blank"
         type="button"
