@@ -19,12 +19,13 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import { Redirect } from "react-router-dom";
 import Course from './course'
 import axios from 'axios';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="/">
+        XkilUp
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

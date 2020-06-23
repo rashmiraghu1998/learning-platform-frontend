@@ -75,19 +75,19 @@ const useStyles = (theme => ({
   },
 }));
 
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="/">
+        XkilUp
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
   );
 }
-
 class UserProfile extends Component {
   constructor(props) {
     super(props);

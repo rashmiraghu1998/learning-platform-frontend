@@ -139,6 +139,12 @@ class Users extends Component {
         sort: 'asc',
         width: 270
       },
+      {
+        label: 'User type',
+        field: 'type',
+        sort: 'asc',
+        width: 270
+      }
       
      
     ];

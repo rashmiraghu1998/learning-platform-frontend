@@ -15,19 +15,19 @@ import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import { Redirect } from "react-router-dom";
 import Course from './course'
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="/">
+        XkilUp
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
   );
 }
-
 const useStyles = theme => ({
   '@global': {
     ul: {

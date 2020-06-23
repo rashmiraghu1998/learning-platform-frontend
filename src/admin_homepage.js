@@ -21,12 +21,13 @@ import CourseSignup from './course_signup';
 import Assign from './assign';
 import Fade from '@material-ui/core/Fade';
 import Modal from '@material-ui/core/Modal';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="/">
+        XkilUp
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

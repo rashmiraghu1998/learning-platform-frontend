@@ -45,11 +45,17 @@ const useStyles = ((theme) => ({
   
   },
   gridList: {
-    flexWrap: 'nowrap',
+    flexWrap: 'wrap',
+
+    overflowY: 'auto',
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
 
   }
 ,
+card:
+{
+  overflow: "auto"
+},
 '@global': {
   ul: {
     margin: 0,
@@ -298,7 +304,7 @@ render(){
       </Grid>
       <Grid item xs={2}>
       <Button fullWidth  color="primary" onClick={this.goToStore}>
-                 Edit Course details
+                 View Course details
                 </Button>
       </Grid>
   </Grid>
@@ -330,9 +336,9 @@ render(){
    
   <GridList className={classes.gridList} cols={4}>
         {this.state.chapters[key].map((tile) => (
-          <GridListTile key={tile.id}>
+          <GridListTile className={classes.card} key={tile.id}>
        
-       <Card>
+       <Card className={classes.card}>
               <CardHeader
                 
                 title={tile.name}
@@ -343,15 +349,19 @@ render(){
 
               />
                <CardContent>
-                <Typography color="textSecondary">
-                 Tags: {tile.tags ? tile.tags.join(","): null }
+                <Typography  numberOfLines={1} color="textSecondary">
+                
+                 Tags: {tile.tags ?  ( tile.tags.join(",").length > 50) ? 
+    (((tile.tags.join(",")).substring(0,50-3)) + '...') : 
+    tile.tags.join(",") : null }
                  
                 </Typography>
               </CardContent>
            
            
              <CardActions>
-      <Button size="small" value={tile.location} onClick={this.showContent}>Learn More</Button>
+               
+      <Button size="small" className={classes.card} value={tile.location} onClick={this.showContent}>Learn More</Button>
       <Button  value={tile.course_code, tile.id, "delete"}  color="primary" onClick={this.goToStorePersonal.bind(this,tile.course_code, tile.id, "delete")}>
                   Delete Tags
                   </Button>

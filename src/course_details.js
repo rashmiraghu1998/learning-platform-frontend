@@ -17,19 +17,19 @@ import Container from '@material-ui/core/Container';
 import { Redirect } from "react-router-dom";
 import Course from './course'
 import axios from 'axios';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="/">
+        XkilUp
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
   );
 }
-
 const useStyles = (theme => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -188,36 +188,8 @@ handleSubmit() {
                 />
               </Grid>
 
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="credits"
-                  label="Credits"
-                  value={this.state.credits} onChange={this.handleChangeCredits}
-                  name="credits"
-                />
-              </Grid>
              
-            <Button
-         
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick = {this.handleSave}
-            >
-              Save
-           </Button>
-            <Button
-            
-              fullWidth
-              variant="contained"
-             
-            >
-              Cancel
-            </Button>
+   
             </Grid>
             </form>
 

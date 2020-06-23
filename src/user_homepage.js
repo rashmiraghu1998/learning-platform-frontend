@@ -42,12 +42,13 @@ import './user_page.css';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="/">
+        XkilUp
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -221,8 +222,13 @@ class userhome extends Component {
       var self = this;
       console.log(window.url_prefix)
       var apiBaseUrl = window.url_prefix+"/college/BMS/branch/CSE/sem/5/content";
-      console.log(this.state.tags);
+      console.log(this.state.tags.length===0);
       console.log(courses);
+      if(!courses.length)
+      {
+        alert("Please enter atleast one tag...");
+      }
+      else{
       var payload={
         "tags": courses,
         "course_ids": courses1 
@@ -247,7 +253,7 @@ class userhome extends Component {
       // self.props.handleModalClose();
   
       });
-    
+      }
       }
   goToStore(v1, v2, v3, event) {
     var self = this;
@@ -362,7 +368,7 @@ class userhome extends Component {
             </Modal>
     <Grid item  xs={5}>
     {/* <Grid item md={8} > */}
-                <MultipleValueTextInput width="100%"
+                <MultipleValueTextInput required width="100%"
                     onItemAdded={(item, allItems) => courses=allItems}
                     onItemDeleted={(item, allItems) =>  courses=allItems}
                     
