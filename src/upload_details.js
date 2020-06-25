@@ -98,7 +98,7 @@ class UploadDetails extends Component {
         "Authorization": localStorage.getItem("bearer_token")
       }
     console.log(self)
-    axios.post(apiBaseUrl+"course/upload", bodyFormData, {headers: headers})
+    axios.post(apiBaseUrl+`course/${self.props.courseCode}/content/upload`, bodyFormData, {headers: headers})
     .then(function (response) {
     if(response.status == 200){
     console.log("Successfully added");
